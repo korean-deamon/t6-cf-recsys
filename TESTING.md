@@ -49,66 +49,58 @@ One file only:
 .venv/bin/python -m unittest tests.test_pipeline -v
 ```
 
-## 3. Data audit (local export)
-
-```bash
-.venv/bin/python -m src.audit --source local
-```
-
-Expected, with the shipped `data/raw.npz`:
-
-- events: `1,325,744`
-- test users: `4,577`
-- bots left out of training: `30`
-- clock (`as_of`): `2026-11-02`
-
-The same audit against the live database (university network only):
+## 3. Data audit (live database, university network)
 
 ```bash
 .venv/bin/python -m src.audit
 ```
 
+Expected, checked on the real database:
+
+- events: `1,331,903`
+- users: `7,031`
+- contents: `4,882`
+- period: `2026-03-01` .. `2026-11-03`
+- test users: `4,577`
+- density: `0.038802`
+
 ## 4. Offline validation (compare the models)
 
 ```bash
-.venv/bin/python -m src.evaluate --models popularity itemknn als --sample 3000 --source local
+.venv/bin/python -m src.evaluate --models popularity itemknn als --sample 3000
 ```
 
 Expected: `als` is clearly the best model, `popularity` is the weakest one.
 The numbers are written to `reports/offline_models.csv`, so you can compare the
 file with the console output.
 
-## 5. Full flow without the database
+## 5. Dry run on the real data (nothing is written)
 
 ```bash
-.venv/bin/python -m src.recommend --run-name demo --model als --source local
+.venv/bin/python -m src.recommend --run-name check --model als --limit-users 200 --dry-run
 ```
 
-This writes `data/recommendations_run1.csv` and prints the row count.
-It does not touch `ml.recommendations`.
+This reads the live database, trains the model and prints the row count, but it
+creates no run and writes nothing to `ml.recommendations`.
 
 ## 6. Real run and leaderboard score
 
 Needs the university network. **Each `--score` call uses one of the 10 daily
-scoring attempts** (3 used so far, 7 left).
+scoring attempts.**
 
 ```bash
 .venv/bin/python -m src.recommend --run-name als_pop06_v1 --model als --score
 ```
 
-Expected score table (this is run 45):
+Expected score table (run 46, real database, 204 s):
 
 ```
-ndcg_at_10      0.18210
-baseline        0.05751
-improvement     2.166x  (+216.6%)
-status          excellent
-```
-
-A cheaper dry run first, to be sure the data loads:
-
-```bash
-.venv/bin/python -m src.recommend --run-name check --model als --limit-users 200 --dry-run
+ndcg_at_10              0.18210
+baseline_ndcg_at_10     0.05751
+improvement_vs_baseline 2.16648  (+216.6%)
+catalog_coverage        0.10430
+hit_rate_at_10          0.57264
+status                  excellent
 ```
 
 ## 7. Check what was written to the database
@@ -121,7 +113,7 @@ psql -h 10.20.9.24 -p 5434 -U t6_student -d ml_t6_recsys_cf -f sql/01_checks.sql
 
 Expected for run 45:
 
-| Check | Expected |
+| Check | Expected (run 46) |
 |---|---|
 | rows / users | `45,770` / `4,577` |
 | users without exactly ranks 1..10 | `0` |
@@ -144,8 +136,8 @@ print(q.fetchall()); c.close()"
 ## 8. Tuning and segments (optional, slower)
 
 ```bash
-.venv/bin/python -m src.tune --source local --sample 3000      # -> reports/tuning.csv
-.venv/bin/python -m src.segments --source local                # -> reports/segments.csv
+.venv/bin/python -m src.tune --sample 3000       # -> reports/tuning.csv
+.venv/bin/python -m src.segments --sample 3000   # -> reports/segments.csv
 ```
 
 `tune` trains 7 parameter sets, so it takes a few minutes. `segments` reports
@@ -160,14 +152,13 @@ NDCG per user activity group, per content popularity group and for cold start.
 | `password authentication failed` | wrong password | copy it from `.env`, mind `O` and `k` |
 | `psql: command not found` | no client installed | use the Python snippet above |
 | `scipy is not installed` | skip note from `test_knn` | `pip install -r requirements.txt` |
-| `data/raw.npz not found` | export missing | on campus: `python -m src.export` |
 
 ## 10. Expected summary
 
 | Item | Value |
 |---|---|
 | unit tests | 36 passed |
-| leaderboard run | 45 |
+| leaderboard run | 46 |
 | NDCG@10 | 0.18210 |
 | baseline (popularity) | 0.05751 |
 | improvement | +216.6% |

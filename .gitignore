@@ -11,6 +11,5 @@ venv/
 .pytest_cache/
 .cache/
 
-# local export used when the database is not reachable (12 MB)
-data/*
-!data/raw.npz
+# local output only (recommendation CSV); no data file is kept in the repo
+data/
