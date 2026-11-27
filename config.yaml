@@ -1,0 +1,50 @@
+# T6 - settings for the collaborative filtering recommender
+# Every step reads this file; no secret is kept in the code.
+
+data:
+  # The real database has raw.data_clock.as_of = 2026-11-02 (test: 11-03 .. 11-16).
+  # Data starts on 2026-03-01.
+  train_start: "2026-03-01 00:00+00"
+  train_end: "2026-11-02 00:00+00"       # as_of: nothing after this day is used
+  test_start: "2026-11-03 00:00+00"
+  test_end: "2026-11-16 00:00+00"
+  # Offline validation: the last 14 days inside train
+  valid_last_days: 14
+  # leave out the 30 suspicious accounts from sandbox.t6_bots
+  exclude_bots: true
+
+# Weights of the implicit signals. Scheme A and B are the two schemes the task asks for.
+weights:
+  scheme: "A"          # A = continuous watch_pct, B = binary threshold
+  min_watch_pct: 0.3   # below this a view is not a "good watch"
+  watch: 1.0           # main signal (watch_seconds / duration_s)
+  like: 0.6            # like event
+  share: 1.2           # share - the strongest sign of intent
+  repeat: 0.5          # bonus for watching again (with log1p)
+  rating_scale: 0.2    # (no ratings table in this database; kept for the interface)
+  bookmark: 1.0        # (no bookmarks table in this database)
+  half_life_days: 180  # time decay: 0.5 ** (age / half_life)
+  binary_watch: 1.0    # score used by scheme B
+
+models:
+  popularity:
+    recent_days: 14        # popularity of the last 14 days
+    pool_size: 500         # how many items we keep as candidates
+
+  itemknn:
+    neighbors: 200         # closest neighbours per item
+    shrink: 10.0           # cosine shrink (pushes down items with little data)
+    block_items: 2000      # compute in blocks to save memory
+
+  als:
+    factors: 32
+    iterations: 12
+    regularization: 0.05
+    alpha: 30.0            # confidence = 1 + alpha * weight
+    pop_prior: 0.6         # recent-popularity prior (balance of coverage and quality)
+    seed: 42
+
+inference:
+  top_k: 10
+  user_chunk: 2000     # how many users are scored at once
+  write_batch: 20000   # how many rows are written at once

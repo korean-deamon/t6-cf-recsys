@@ -1,0 +1,10 @@
+segment_turi,segment,n_users,ndcg_at_10
+jami,hammasi,3000,0.09559543058336817
+foydalanuvchi,faollik: kam,1001,0.1105158815038884
+foydalanuvchi,faollik: o'rta,999,0.0888400013015587
+foydalanuvchi,faollik: yuqori,1000,0.08740873306445511
+kontent,head ulushi (top-10),3000,0.9987666666666667
+kontent,mid ulushi (top-10),3000,0.0009333333333333333
+kontent,tail ulushi (top-10),3000,0.0003
+cold start,train'da yo'q,1792,0.09282820267976548
+cold start,tarixi bor,1208,0.09970045740725564

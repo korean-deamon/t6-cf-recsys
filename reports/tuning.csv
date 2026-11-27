@@ -1,0 +1,8 @@
+name,ndcg_at_10,recall_at_10,catalog_coverage,seconds,weights,als
+pop09_a30,0.0971290401533535,0.126576455026455,0.17720442302239864,13.8,{},"{'factors': 32, 'iterations': 12, 'alpha': 30.0, 'regularization': 0.05, 'pop_prior': 0.9}"
+pop09,0.09630967647832998,0.12694153439153438,0.1746526793308761,11.5,{},"{'factors': 32, 'iterations': 12, 'alpha': 20.0, 'regularization': 0.05, 'pop_prior': 0.9}"
+pop09_reg02,0.09623532947420613,0.12638597883597882,0.1746526793308761,11.3,{},"{'factors': 32, 'iterations': 12, 'alpha': 20.0, 'regularization': 0.02, 'pop_prior': 0.9}"
+pop09_it8,0.09583070319174015,0.12708412698412697,0.17578678763821945,7.5,{},"{'factors': 32, 'iterations': 8, 'alpha': 20.0, 'regularization': 0.05, 'pop_prior': 0.9}"
+pop12,0.09564182573213369,0.1267042328042328,0.15792458179756166,11.4,{},"{'factors': 32, 'iterations': 12, 'alpha': 20.0, 'regularization': 0.05, 'pop_prior': 1.2}"
+pop06,0.09320679235779787,0.12203809523809525,0.20867592855117664,11.7,{},"{'factors': 32, 'iterations': 12, 'alpha': 20.0, 'regularization': 0.05, 'pop_prior': 0.6}"
+pop09_f48,0.09203579834356489,0.12081428571428571,0.19846895378508647,28.3,{},"{'factors': 48, 'iterations': 16, 'alpha': 20.0, 'regularization': 0.05, 'pop_prior': 0.9}"

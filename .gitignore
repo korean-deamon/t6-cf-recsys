@@ -1,0 +1,16 @@
+# .env is committed on purpose: the project must run right after cloning
+*.pem
+# screenshots with logins and passwords for all tasks - never in the repo
+photo_*.jpg
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.cache/
+
+# local export used when the database is not reachable (12 MB)
+data/*
+!data/raw.npz
