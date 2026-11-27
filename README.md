@@ -19,21 +19,17 @@ pip install -r requirements.txt
 # 2) ulanish ma'lumotlari (mentor bergan qiymatlar)
 cp .env.example .env      # va PGPASSWORD ni yozing
 
-# 3) HAR HOLDA universitet tarmog'ida turganda ma'lumotni yuklab oling
-#    (uyda internetdan ishlash uchun; data/ gitignore'da)
-python -m src.export
-
-# 4) ma'lumotni tekshirish (Hafta-1 auditi)
+# 3) ma'lumotni tekshirish (Hafta-1 auditi, universitet tarmog'i kerak)
 python -m src.audit
 
 # 5) modellarni offline solishtirish (leaderboard'siz)
 python -m src.evaluate --models popularity itemknn als --sample 3000
 
 # 5b) ALS giperparametrlarini tanlash -> reports/tuning.csv
-python -m src.tune --source local --sample 3000
+python -m src.tune --sample 3000
 
 # 5c) segment tahlili -> reports/segments.csv
-python -m src.segments --source local --sample 3000
+python -m src.segments --sample 3000
 
 # 6) tavsiyalarni hisoblab, bazaga yozish va baholash
 python -m src.recommend --run-name pop_v1 --model popularity --score
@@ -43,30 +39,11 @@ python -m src.recommend --run-name als_v1 --model als --score
 python -m unittest discover -s tests -t .
 ```
 
-## Bazasiz rejim (uyda / universitet tarmog'idan tashqarida)
+## Baza haqida
 
 Baza `10.20.9.24` — ichki tarmoq, ya'ni faqat universitetda/VPN ichida
-ko'rinadi. Shu sababli **bir marta**, tarmoqda turganda ma'lumotni lokal
-faylga chiqarib oling:
-
-```bash
-python -m src.export            # -> data/raw.npz (~50-80 MB)
-```
-
-Keyin istalgan joyda bazasiz ishlaysiz:
-
-```bash
-python -m src.audit    --source local
-python -m src.evaluate --source local --models popularity itemknn als
-python -m src.recommend --run-name als_v1 --model als --source local
-```
-
-Lokal rejimda natija bazaga emas, `data/recommendations_run<N>.csv` ga
-yoziladi (universitetga qaytgach o'sha CSV ni bazaga yuklash mumkin).
-`eval.score_run()` faqat universitet bazasida ishlaydi.
-
-> `data/` papkasi `.gitignore` da: eksport qilingan ma'lumot mentorning
-> maxfiy ma'lumoti, uni repoga yoki boshqa joyga tarqatmang.
+ko'rinadi. Hamma buyruqlar to'g'ridan-to'g'ri shu bazada ishlaydi (lokal
+nusxa ishlatilmaydi). `eval.score_run()` ham faqat shu bazada ishlaydi.
 
 Sinov uchun foydali bayroqlar: `--limit-users 200 --dry-run`
 (bazaga hech narsa yozmaydi, faqat hisoblaydi).
